@@ -1,8 +1,9 @@
 {:deps {io.github.nextjournal/clerk {:mvn/version "0.6.387"}}
+ :paths ["daily_coding_problem"]
  :aliases
  {:nextjournal/clerk
-  {:extra-paths ["datasets"]
-   :exec-fn nextjournal.clerk/build-static-app!
+  {:exec-fn nextjournal.clerk/build-static-app!
    ;; notebooks to be built, accepts globs patterns
    :exec-args {:bundle? false
-               :paths ["src/day_0001.clj"]}}}}
+               :paths ["daily_coding_problem/day_0001.clj"
+                       "daily_coding_problem/day_0002.clj"]}}}}
