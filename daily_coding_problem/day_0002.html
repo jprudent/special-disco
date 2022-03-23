@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html><head><title>Day 2</title><meta charset="UTF-8"><meta content="width=device-width, initial-scale=1" name="viewport"><script src="https://cdn.tailwindcss.com?plugins=typography" type="text/javascript"></script><script>tailwind.config = {
+  darkMode: "class",
+  content: ["./public/build/index.html", "./public/build/**/*.html", "./build/viewer.js"],
+  safelist: ['dark'],
+  theme: {
+    extend: {},
+    fontFamily: {
+      sans: ["Fira Sans", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+      serif: ["PT Serif", "serif"],
+      mono: ["Fira Mono", "monospace"]
+    }
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
+}
+</script><style type="text/tailwindcss">@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-size: 18px;
+  }
+  @media (max-width: 600px) {
+    html {
+      font-size: 16px;
+    }
+  }
+  .font-condensed { font-family: "Fira Sans Condensed", sans-serif; }
+  .font-inter     { font-family: "Inter", sans-serif; }
+  body {
+    @apply font-serif antialiased text-gray-900 sm:overscroll-y-none;
+  }
+  code, .code {
+    @apply font-mono text-sm text-gray-900 bg-slate-50 px-0.5 py-px rounded dark:bg-slate-800;
+  }
+  code::before, code::after { @apply content-none !important; }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-condensed font-bold mt-8 first:mt-0;
+  }
+  h1 { @apply text-4xl; }
+  h2 { @apply text-3xl; }
+  h3 { @apply text-2xl; }
+  h4 { @apply text-xl; }
+  h5 { @apply text-lg; }
+  h6 { @apply text-base; }
+
+  button { @apply focus:outline-none; }
+  strong { @apply font-bold; }
+  em     { @apply italic; }
+  pre    { @apply m-0 font-mono; }
+}
+
+/* Compatibility */
+/* --------------------------------------------------------------- */
+/* TODO: Verify which colors are in use and replace with Tailwind
+   colors accordingly. Move Nj-specific styles out of here. */
+
+:root {
+  --teal-color: #31afd0;
+  --dark-teal-color: #095960;
+  --near-black-color: #2e2e2c;
+  --red-color: #d64242;
+  --dark-blue-color: #1f2937;
+  --dark-blue-60-color: rgba(28, 42, 56, 0.6);
+  --gray-panel-color: rgba(239, 241, 245, 1.000);
+  --brand-color: var(--dark-blue-color);
+  --link-color: #5046e4;
+  --command-bar-selected-color: var(--teal-color);
+}
+
+.serif      { @apply font-serif; }
+.sans-serif { @apply font-sans; }
+.monospace  { @apply font-mono; }
+.inter      { @apply font-inter; }
+
+.border-color-teal { border-color: var(--dark-teal-color); }
+.teal { color: var(--teal-color); }
+.bg-dark-blue { background: var(--dark-blue-color); }
+.bg-dark-blue-60 { background: rgba(28, 42, 56, 0.6); }
+.bg-gray-panel { background: var(--gray-panel-color); }
+.text-dark-blue  { color: var(--dark-blue-color); }
+.text-dark-blue-60 { color: var(--dark-blue-60-color); }
+.border-dark-blue-30 { border-color: rgba(28, 42, 56, 0.6); }
+.text-brand { color: var(--dark-blue-color); }
+.bg-brand { background: var(--dark-blue-color); }
+.text-selected { color: white; }
+.red { color: var(--red-color); }
+
+/* Disclose Button */
+/* --------------------------------------------------------------- */
+
+.disclose {
+  @apply content-none border-solid cursor-pointer inline-block relative mr-[3px] top-[-2px] transition-all;
+  border-color: var(--near-black-color) transparent;
+  border-width: 6px 4px 0;
+}
+.disclose:hover {
+  border-color: var(--near-black-color) transparent;
+}
+.dark .disclose,
+.dark .disclose:hover {
+  border-color: white transparent;
+}
+.disclose.collapsed {
+  @apply rotate-[-90deg];
+}
+
+/* Layout */
+/* --------------------------------------------------------------- */
+
+.page {
+  @apply max-w-5xl mx-auto px-12 box-border flex-shrink-0;
+}
+.toc-content {
+  @apply translate-x-[-110%] opacity-0;
+}
+.toc:hover .toc-content,
+.toc.pinned .toc-content {
+  @apply translate-x-0 opacity-100;
+}
+.max-w-prose { @apply max-w-[46rem] !important; }
+.max-w-wide  { @apply max-w-3xl !important; }
+
+/* List Styles */
+/* --------------------------------------------------------------- */
+
+.task-list-item + .task-list-item,
+.viewer-markdown ul .task-list-item ul {
+  @apply mt-1;
+}
+
+/* compact TOC */
+.viewer-markdown .toc ul {
+  list-style: none;
+  @apply my-0;
+}
+
+/* Code Viewer */
+/* --------------------------------------------------------------- */
+
+.viewer-code {
+  @apply font-mono bg-slate-100 rounded-sm text-sm mt-4 overflow-x-auto dark:bg-slate-800;
+}
+.viewer-code .cm-content {
+  @apply py-4 px-8;
+}
+@media (min-width: 960px){
+  .viewer-notebook .viewer-code .cm-content {
+    @apply py-4 pl-12;
+  }
+}
+/* Don’t show focus outline when double-clicking cell in Safari */
+.cm-scroller { @apply focus:outline-none; }
+
+/* Syntax Highlighting */
+/* --------------------------------------------------------------- */
+
+.inspected-value { @apply text-xs font-mono leading-[1.25rem]; }
+.cmt-strong, .cmt-heading { @apply font-bold; }
+.cmt-emphasis { @apply italic; }
+.cmt-strikethrough { @apply line-through; }
+.cmt-link { @apply underline; }
+.untyped-value { @apply whitespace-nowrap; }
+
+.cm-editor, .cmt-default, .viewer-result {
+  @apply text-slate-800 dark:text-slate-300;
+}
+.cmt-keyword {
+  @apply text-purple-800 dark:text-pink-400;
+}
+.cmt-atom, .cmt-bool, .cmt-url, .cmt-contentSeparator, .cmt-labelName {
+  @apply text-blue-900 dark:text-blue-300;
+}
+.cmt-inserted, .cmt-literal {
+  @apply text-emerald-700 dark:text-emerald-200;
+}
+.cmt-string, .cmt-deleted {
+  @apply text-rose-700 dark:text-sky-300;
+}
+.cmt-regexp, .cmt-escape {
+  @apply text-orange-500 dark:text-orange-300;
+}
+.cmt-variableName {
+  @apply text-blue-800 dark:text-sky-300;
+}
+.cmt-typeName, .cmt-namespace {
+  @apply text-emerald-600 dark:text-emerald-300;
+}
+.cmt-className {
+  @apply text-teal-600 dark:text-teal-200;
+}
+.cmt-macroName {
+  @apply text-teal-700 dark:text-teal-200;
+}
+.cmt-propertyName {
+  @apply text-blue-700 dark:text-blue-200;
+}
+.cmt-comment {
+  @apply text-slate-500 dark:text-slate-400;
+}
+.cmt-meta {
+  @apply text-slate-600 dark:text-slate-400;
+}
+.cmt-invalid {
+  @apply text-red-500 dark:text-red-300;
+}
+
+.result-data {
+  @apply font-mono text-sm overflow-x-auto whitespace-nowrap leading-normal;
+}
+.result-data::-webkit-scrollbar, .path-nav::-webkit-scrollbar {
+  @apply h-0;
+}
+.result-data-collapsed {
+  @apply whitespace-nowrap;
+}
+.result-data-field {
+  @apply ml-4 whitespace-nowrap;
+}
+.result-data-field-link{
+  @apply ml-4 whitespace-nowrap cursor-pointer;
+}
+.result-data-field-link:hover {
+  @apply text-black bg-black/5;
+}
+.result-text-empty {
+  color: rgba(0,0,0,.3);
+}
+.browsify-button:hover {
+  box-shadow: -2px 0 0 2px #edf2f7;
+}
+
+/* Prose */
+/* --------------------------------------------------------------- */
+
+.viewer-notebook,
+.viewer-markdown {
+  @apply prose
+    dark:prose-invert
+    prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+    dark:prose-a:text-blue-300
+    prose-p:mt-4 prose-p:leading-snug
+    prose-ol:mt-4 prose-ol:mb-6 prose-ol:leading-snug
+    prose-ul:mt-4 prose-ul:mb-6 prose-ul:leading-snug
+    prose-blockquote:mt-4 prose-blockquote:leading-snug
+    prose-hr:mt-6 prose-hr:border-t-2 prose-hr:border-solid prose-hr:border-slate-200
+    prose-figure:mt-4
+    prose-figcaption:mt-2 prose-figcaption:text-xs
+    prose-headings:mb-6
+    prose-th:mb-0
+    prose-img:mb-0
+    max-w-none;
+}
+.viewer-markdown li > p {
+  @apply inline;
+}
+
+/* Todo Lists */
+/* --------------------------------------------------------------- */
+
+.contains-task-list {
+  @apply pl-6 list-none;
+}
+.contains-task-list li p {
+  @apply inline m-0;
+}
+.contains-task-list input[type="checkbox"] {
+  @apply appearance-none h-4 w-4 rounded border border-slate-200 relative mr-[0.3rem] ml-[-1.5rem] top-[0.15rem];
+}
+.contains-task-list input[type="checkbox"]:checked {
+  @apply border-indigo-600 bg-indigo-600 bg-no-repeat bg-contain;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+
+/* Markdown TOC */
+/* --------------------------------------------------------------- */
+
+.viewer-markdown .toc      { @apply mt-4; }
+.viewer-markdown h1 + .toc { @apply mt-8; }
+
+.viewer-markdown .toc h1,
+.viewer-markdown .toc h2,
+.viewer-markdown .toc h3,
+.viewer-markdown .toc h4,
+.viewer-markdown .toc h5,
+.viewer-markdown .toc h6 {
+  @apply text-base text-indigo-600 font-sans my-0;
+}
+.viewer-markdown .toc a {
+  @apply text-indigo-600 font-normal no-underline hover:underline;
+}
+.viewer-markdown .toc li    { @apply m-0; }
+.viewer-markdown .toc ul ul { @apply pl-4; }
+
+/* Notebook Spacing */
+/* --------------------------------------------------------------- */
+
+.viewer-notebook { @apply py-16; }
+.viewer-markdown *:first-child:not(.viewer-code) { @apply mt-0; }
+.viewer + .viewer { @apply mt-6; }
+.viewer-markdown + .viewer { @apply mt-3; }
+.viewer-markdown + .viewer-markdown { @apply mt-0; }
+
+/* Sidenotes */
+/* --------------------------------------------------------------- */
+
+.sidenote-ref {
+  @apply top-[-3px] inline-flex justify-center items-center w-[18px] h-[18px]
+    rounded-full bg-slate-100 border border-slate-300 hover:bg-slate-200 hover:border-slate-300
+    m-0 ml-[4px] cursor-pointer;
+}
+.sidenote {
+  @apply hidden float-left clear-both mx-[2.5%] my-4 text-xs relative w-[95%];
+}
+.sidenote-ref.expanded + .sidenote {
+  @apply block;
+}
+@media (min-width: 860px) {
+  .sidenote-ref {
+    @apply top-[-0.5em] w-auto h-auto inline border-0 bg-transparent m-0 pointer-events-none;
+  }
+  .sidenote sup { @apply inline; }
+  .viewer-markdown .contains-sidenotes p { @apply max-w-[65%]; }
+  .viewer-markdown p .sidenote {
+    @apply mr-[-54%] mt-[0.2rem] w-1/2 float-right clear-right relative block;
+  }
+}
+.viewer-code + .viewer:not(.viewer-markdown):not(.viewer-code):not(.viewer-code-folded),
+.viewer-code-folded + .viewer:not(.viewer-markdown):not(.viewer-code):not(.viewer-code-folded),
+.viewer-result + .viewer-result {
+  @apply mt-2;
+}
+.viewer-result {
+  @apply leading-tight;
+}
+@media (min-width: 768px) {
+  .devcard-desc > div {
+    @apply max-w-full m-0;
+  }
+}
+
+/* Command Palette */
+/* --------------------------------------------------------------- */
+
+.nj-commands-input {
+  @apply bg-transparent text-white;
+}
+.nj-context-menu-item:hover:not([disabled]) {
+  @apply cursor-pointer;
+  background-color: rgba(255,255,255,.14);
+}
+
+/* Devdocs */
+/* --------------------------------------------------------------- */
+
+.collapsed-sidebar:not(.mobile-sidebar) .sidebar-content {
+  @apply transition-all duration-200 ml-[-360px] opacity-0;
+}
+.collapsed-sidebar:hover:not(.mobile-sidebar) .sidebar-content {
+  @apply ml-0 opacity-100;
+}
+.logo, .logo-white {
+  @apply block indent-[-999em];
+  background: url(/images/nextjournal-logo.svg) center center no-repeat;
+}
+.devdocs-body {
+  @apply font-inter;
+}
+
+/* Workarounds */
+/* --------------------------------------------------------------- */
+
+/* Fixes vega viewer resizing into infinity */
+.vega-embed .chart-wrapper { @apply h-auto !important; }
+/* fixes fraction separators being overridden by tw’s border-color */
+.katex * { @apply border-black; }
+</style><script src="https://storage.googleapis.com/nextjournal-cas-eu/data/8Vt3Eko1RGonTrRXaLTP6Ly5XugGnYiRapACBxSoZ2RKwFztsi2NYXvTb5vyCTFya2RDgK9vXwVvKBnQ8dWopcmvA5" type="text/javascript"></script><link href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css" rel="stylesheet" type="text/css"><link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&amp;family=Fira+Mono:wght@400;700&amp;family=Fira+Sans+Condensed:ital,wght@0,700;1,700&amp;family=Fira+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet" type="text/css"></head><body><div id="clerk-static-app"></div><script>let viewer = nextjournal.clerk.sci_viewer
+let app = nextjournal.clerk.static_app
+let opts = viewer.read_string("{:bundle? false, :paths [\"daily_coding_problem/day_0001.clj\" \"daily_coding_problem/day_0002.clj\"], :path-prefix \"special-disco/\", :git/sha \"9b259278749b0724c4f1dca4d3af92ab99e8e58c\", :path->doc {\"daily_coding_problem/day_0002.clj\" {:nextjournal/value {:blocks [{:nextjournal/value \" # Day 2\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(ns day-0002)\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value nil, :nextjournal/viewer {:render-fn #viewer-fn (fn [_] (v/html [:span.cmt-default.inspected-value \\\"nil\\\"]))}}\"}, :path []} {:nextjournal/value \" ## The problem\\n This problem was asked by Uber.\\n\\n Given an array of integers, return a new array such that each element at index i of the new array is the product of all\\n the numbers in the original array except the one at i.\\n\\nFor example, if our input was [1, 2, 3, 4, 5], the expected output would be [120, 60, 40, 30, 24].\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(def input1 [1, 2, 3, 4, 5])\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 1, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 2, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [3], :nextjournal/value 4, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [4], :nextjournal/value 5, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \"(def expected1 [120, 60, 40, 30, 24])\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 120, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 60, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 40, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [3], :nextjournal/value 30, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [4], :nextjournal/value 24, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \"If our input was [3, 2, 1], the expected output would be [2, 3, 6].\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(def input2 [3, 2, 1])\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 2, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 1, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \"(def expected2 [2, 3, 6])\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 2, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 6, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \" Follow-up: what if you can't use division?\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" ## The easy solution that uses division\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" This solution consists in computing the product of each numbers\\n Then for each number, we divide the product by the number at i to \\\"remove\\\" the one at i\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(def product1 (reduce * input1))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value 120, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}\"}, :path []} {:nextjournal/value \"(def solution1 (map #(/ product1 %) input1))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 120, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 60, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 40, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [3], :nextjournal/value 30, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [4], :nextjournal/value 24, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"(\\\", :closing-paren (\\\")\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \"(= solution1 expected1)\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value true, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-bool.inspected-value (str x)]))}}\"}, :path []} {:nextjournal/value \" This solution is O(n) and we browse the array twice.\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" ## Without using division\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" ### O(n2)\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" First thing that comes up is an algorithm that will compute the product in 0(n)\\n for each element.\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" That's inelegant and inefficient.\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" ### Multiplying right and left product of each element\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(def mulright (second (reduce (fn [[last-product result] i]\\n                                [(* last-product (get input2 i))\\n                                 (conj result last-product)])\\n                              [1 []] (range (count input2)))))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 1, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 6, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \"(def mulleft (second (reduce (fn [[last-product result] i]\\n                               [(* last-product (get input2 i))\\n                                (conj result (* (get mulright i) last-product))])\\n                             [1 '()] (range (dec (count input2)) -1 -1))))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 2, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 6, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"(\\\", :closing-paren (\\\")\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \" It works, but that's horribly complex because :\\n - The accumulator of the reducing function is a bit complexe.\\n   It holds the accumulation of products **and** the resulting sequence\\n - I rely on indices for accessing the sequences.\\n   Generating the indices in decrementing order is difficult to read.\\n - I use different kinds of sequence which `conj` behave differently.\\n   For vectors (`[]`) `conj` **appends**. For lists (`'()`) it **prepends**.\\n   This is an accepted trick in Clojure world, but it certainly ain't straightforward.\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" Let's try to rewrite this stuff using (omg) mutability\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(let [input input2\\n      n (count input)\\n      result (transient [])]\\n  (reduce (fn [last-product i]\\n            (conj! result last-product)\\n            (* last-product (get input i)))\\n          1 (range n))\\n  (reduce (fn [last-product i]\\n            (assoc! result i (* (get result i) last-product))\\n            (* last-product (get input i))\\n            1)\\n          1 (range (dec n) -1 -1))\\n  (persistent! result))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 1, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 6, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \" Try to uniformize a bit the algorithms for right and left part\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(let [input input2\\n      n (count input)\\n      result (transient (into [] (repeat n 1)))]\\n  (reduce (fn [last-product i]\\n            (assoc! result i (* (get result i) last-product))\\n            (* last-product (get input i)))\\n          1 (range n))\\n  (reduce (fn [last-product i]\\n            (assoc! result i (* (get result i) last-product))\\n            (* last-product (get input i))\\n            1)\\n          1 (range (dec n) -1 -1))\\n  (persistent! result))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 1, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 6, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \" Let's factorize things a bit\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(let [input input2\\n      n (count input)\\n      result (transient (into [] (repeat n 1)))\\n      reducing-fn (fn [last-product i]\\n                    (assoc! result i (* (get result i) last-product))\\n                    (* last-product (get input i)))]\\n  (reduce reducing-fn 1 (range n))\\n  (reduce reducing-fn 1 (range (dec n) -1 -1))\\n  (persistent! result))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 2, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 6, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \" Do we still need mutability ?\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(let [input input2\\n      n (count input)\\n      reducing-fn (fn [[result last-product] i]\\n                    [(assoc result i (* (get result i) last-product))\\n                     (* last-product (get input i))])\\n      [mulright _] (reduce reducing-fn [(vec (repeat n 1)) 1] (range n))\\n      [mulleft _] (reduce reducing-fn [mulright 1] (range (dec n) -1 -1))]\\n  mulleft)\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value [{:path [0], :nextjournal/value 2, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [1], :nextjournal/value 3, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}} {:path [2], :nextjournal/value 6, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-number.inspected-value (if (js/Number.isNaN x) \\\"NaN\\\" (str x))]))}}], :nextjournal/viewer {:render-fn #viewer-fn v/coll-viewer, :opening-paren \\\"[\\\", :closing-paren (\\\"]\\\"), :fetch-opts {:n 20}}}\"}, :path []} {:nextjournal/value \" No we don't ! So the key was to uniformize the algorithms. I had to try\\n the mutable version to achieve this, don't really know why.\\n I still got some complexity I think:\\n - My accumulator is complex\\n - I use indices for accessing data\\n But I don't see possible improvement to get rid of it.\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \" Here is a final version\\n\", :nextjournal/viewer :markdown} {:nextjournal/value \"(defn solution [input]\\n  (let [n (count input)\\n        reducing-fn (fn [[result last-product] i]\\n                      [(assoc result i (* (get result i) last-product))\\n                       (* last-product (get input i))])\\n        [mulright _] (reduce reducing-fn [(vec (repeat n 1)) 1] (range n))\\n        [mulleft _] (reduce reducing-fn [mulright 1] (range (dec n) -1 -1))]\\n    mulleft))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value \\\"y_0002$solution 0x520ddd29 \\\\\\\"day_0002$solution@520ddd29\\\\\\\"\\\", :nextjournal/viewer {:name :fn, :render-fn #viewer-fn (fn [x] (v/html [:span.inspected-value [:span.cmt-meta \\\"#function\\\"] \\\"[\\\" x \\\"]\\\"]))}}\", :nextjournal/viewer {:name :fn}}, :path []} {:nextjournal/value \"(= expected2 (solution input2))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value true, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-bool.inspected-value (str x)]))}}\"}, :path []} {:nextjournal/value \"(= expected1 (solution input1))\", :nextjournal/viewer :code} {:nextjournal/viewer :clerk/result, :nextjournal/value {:nextjournal/edn \"{:path [], :nextjournal/value true, :nextjournal/viewer {:render-fn #viewer-fn (fn [x] (v/html [:span.cmt-bool.inspected-value (str x)]))}}\"}, :path []}], :title \"Day 2\"}, :nextjournal/viewer :clerk/notebook, :scope {:namespace :day-0002}}}, :path->url {\"daily_coding_problem/day_0001.clj\" \"daily_coding_problem/day_0001.html\", \"daily_coding_problem/day_0002.clj\" \"daily_coding_problem/day_0002.html\"}, :current-path \"daily_coding_problem/day_0002.clj\"}")
+app.init(opts)
+</script></body></html>
